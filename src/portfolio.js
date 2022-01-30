@@ -8,7 +8,7 @@ const about = {
   name: 'Sticks',
   role: 'Developer + Full Time Nerd',
   description:
-    'Hi! I am sticks, 18 years old, and currently in collage for Computer Science. Feel free to check out my projects and contact me if you have any questions.',
+    'Hi! I am sticks, 18 years old, and currently in college for Computer Science. Feel free to check out my projects and contact me if you have any questions.',
   resume: '#contact-popen',
   social: {
     github: 'https://github.com/Thatcooldevguy',
