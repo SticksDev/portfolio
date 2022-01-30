@@ -1,8 +1,6 @@
 {
-  "name": "cleanfolio",
-  "version": "0.1.0",
-  "private": true,
-  "homepage": "https://rajshekhar26.github.io/cleanfolio",
+  "name": "portfolio",
+  "version": "1.0.0",
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
