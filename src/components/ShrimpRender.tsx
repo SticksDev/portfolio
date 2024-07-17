@@ -32,7 +32,7 @@ export function ShrimpModel(props: JSX.IntrinsicElements['group']) {
     );
 }
 
-useGLTF.preload('/shrimp.glb');
+useGLTF.preload('/shrimp_smol.glb');
 
 function CameraHelper() {
     const camera = new THREE.PerspectiveCamera(60, 1.77, 1, 3);
