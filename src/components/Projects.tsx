@@ -26,9 +26,6 @@ export default function Projects() {
     const maxDescriptionLength = Math.max(
         ...projects.map((project) => project.description.length),
     );
-    const maxLinkLength = Math.max(
-        ...projects.map((project) => project.link.length),
-    );
 
     // Step 2: Prepare projects with padded strings for rendering
     const preparedProjects = projects.map((project) => ({
@@ -41,13 +38,20 @@ export default function Projects() {
         <div className='bg-black font-mono text-white'>
             <h1 className='text-white font-mono text-md mb-4'>
                 --- Reading database projects.db ---<br></br>
-                Found {projects.length} projects in database. Displaying all projects:
+                Found {projects.length} projects in database. Displaying all
+                projects:
             </h1>
             {preparedProjects.map((project, index) => (
                 <div key={index} className='flex flex-row'>
                     <p>{project.title}</p> &nbsp;|
                     <p>&nbsp;{project.description}</p>|
-                    <a href={project.link} className="hover:text-blue-500 duration-200" target="blank">&nbsp;{project.link}</a>
+                    <a
+                        href={project.link}
+                        className='hover:text-blue-500 duration-200'
+                        target='blank'
+                    >
+                        &nbsp;{project.link}
+                    </a>
                 </div>
             ))}
 
