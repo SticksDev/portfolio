@@ -2,124 +2,148 @@
 
 /* Fallout Terminal Theme */
 @layer base {
-  :root {
-    --terminal-green: #00ff41;
-    --terminal-green-dim: #00cc33;
-    --terminal-green-dark: #008822;
-    --terminal-bg: #0a0e0a;
-    --terminal-error: #ff0000;
-  }
+    :root {
+        --terminal-green: #00ff41;
+        --terminal-green-dim: #00cc33;
+        --terminal-green-dark: #008822;
+        --terminal-bg: #0a0e0a;
+        --terminal-error: #ff0000;
+    }
 
-  body {
-    font-family: 'Courier New', Courier, monospace;
-  }
+    body {
+        font-family: 'Courier New', Courier, monospace;
+    }
 
-  /* Windows content styling */
-  .window-content {
-    color: #000000 !important;
-    font-size: 16px;
-    line-height: 1.8;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
+    /* Windows content styling */
+    .window-content {
+        color: #000000 !important;
+        font-size: 16px;
+        line-height: 1.8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-  .window-content *,
-  .window-content p,
-  .window-content span,
-  .window-content div,
-  .window-content pre {
-    color: #000000 !important;
-    text-shadow: none !important;
-  }
+    .window-content h1,
+    .window-content h2,
+    .window-content p,
+    .window-content span,
+    .window-content div,
+    .window-content pre {
+        color: #000000 !important;
+        text-shadow: none !important;
+    }
 
-  .window-content pre {
-    background: #f0f0f0;
-    padding: 12px;
-    border-radius: 4px;
-    overflow-x: auto;
-  }
+    .window-content pre {
+        background: #f0f0f0;
+        padding: 12px;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
 }
 
 /* CRT Screen Effects */
 @layer utilities {
-  @keyframes flicker {
-    0% { opacity: 1; }
-    2% { opacity: 0.98; }
-    4% { opacity: 1; }
-    8% { opacity: 0.97; }
-    10% { opacity: 1; }
-    100% { opacity: 1; }
-  }
+    @keyframes flicker {
+        0% {
+            opacity: 1;
+        }
+        2% {
+            opacity: 0.98;
+        }
+        4% {
+            opacity: 1;
+        }
+        8% {
+            opacity: 0.97;
+        }
+        10% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
 
-  @keyframes glow {
-    0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 65, 0.5); }
-    50% { text-shadow: 0 0 15px rgba(0, 255, 65, 0.7); }
-  }
+    @keyframes glow {
+        0%,
+        100% {
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+        50% {
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.7);
+        }
+    }
 
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    50.1%, 100% { opacity: 0; }
-  }
+    @keyframes blink {
+        0%,
+        50% {
+            opacity: 1;
+        }
+        50.1%,
+        100% {
+            opacity: 0;
+        }
+    }
 
-  .animate-flicker {
-    animation: flicker 4s infinite;
-  }
+    .animate-flicker {
+        animation: flicker 4s infinite;
+    }
 
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite;
-  }
+    .animate-glow {
+        animation: glow 2s ease-in-out infinite;
+    }
 
-  .animate-blink {
-    animation: blink 1s step-end infinite;
-  }
+    .animate-blink {
+        animation: blink 1s step-end infinite;
+    }
 
-  .text-terminal {
-    color: var(--terminal-green);
-    text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
-  }
+    .text-terminal {
+        color: var(--terminal-green);
+        text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+    }
 
-  .text-terminal-dim {
-    color: var(--terminal-green-dim);
-    text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
-  }
+    .text-terminal-dim {
+        color: var(--terminal-green-dim);
+        text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+    }
 
-  .text-terminal-error {
-    color: var(--terminal-error);
-    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-  }
+    .text-terminal-error {
+        color: var(--terminal-error);
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
 
-  .bg-terminal {
-    background-color: var(--terminal-bg);
-  }
+    .bg-terminal {
+        background-color: var(--terminal-bg);
+    }
 
-  .crt-scanline::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      transparent 50%,
-      rgba(0, 255, 65, 0.05) 50%
-    );
-    background-size: 100% 4px;
-    pointer-events: none;
-    z-index: 1000;
-  }
+    .crt-scanline::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            transparent 50%,
+            rgba(0, 255, 65, 0.05) 50%
+        );
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 1000;
+    }
 
-  .crt-vignette::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(
-      ellipse at center,
-      transparent 0%,
-      rgba(0, 0, 0, 0.3) 100%
-    );
-    pointer-events: none;
-    z-index: 999;
-  }
+    .crt-vignette::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            ellipse at center,
+            transparent 0%,
+            rgba(0, 0, 0, 0.3) 100%
+        );
+        pointer-events: none;
+        z-index: 999;
+    }
 }

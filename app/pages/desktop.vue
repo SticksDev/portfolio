@@ -41,7 +41,7 @@
       <Transition name="icon-fade">
         <DesktopIcon
           v-if="visibleIcons >= 1"
-          icon="👤"
+          :icon="User"
           label="About Me"
           @dblclick="openWindow('about')"
         />
@@ -49,7 +49,7 @@
       <Transition name="icon-fade">
         <DesktopIcon
           v-if="visibleIcons >= 2"
-          icon="💼"
+          :icon="Briefcase"
           label="Projects"
           @dblclick="openWindow('projects')"
         />
@@ -57,7 +57,7 @@
       <Transition name="icon-fade">
         <DesktopIcon
           v-if="visibleIcons >= 3"
-          icon="🎓"
+          :icon="GraduationCap"
           label="Experience"
           @dblclick="openWindow('experience')"
         />
@@ -65,9 +65,17 @@
       <Transition name="icon-fade">
         <DesktopIcon
           v-if="visibleIcons >= 4"
-          icon="📧"
+          :icon="Mail"
           label="Contact"
           @dblclick="openWindow('contact')"
+        />
+      </Transition>
+      <Transition name="icon-fade">
+        <DesktopIcon
+          v-if="visibleIcons >= 5"
+          :icon="FileText"
+          label="Blog"
+          @dblclick="openWindow('blog')"
         />
       </Transition>
     </div>
@@ -129,6 +137,20 @@
       <Contact />
     </Window>
 
+    <Window
+      v-if="windows.blog"
+      title="Blog - ShrimpOS"
+      :initial-x="350"
+      :initial-y="100"
+      :width="1000"
+      :height="650"
+      :is-active="activeWindow === 'blog'"
+      @close="closeWindow('blog')"
+      @activate="activeWindow = 'blog'"
+    >
+      <Blog />
+    </Window>
+
     <!-- Start Menu -->
     <div
       v-if="showStartMenu"
@@ -146,48 +168,65 @@
           @click="openWindow('about'); showStartMenu = false"
           class="menu-item w-full text-left px-4 py-2 hover:bg-[#000080] hover:text-white flex items-center gap-3 border-b border-gray-400"
         >
-          <span class="text-lg">👤</span>
+          <User/>
           <span>About Me</span>
         </button>
         <button
           @click="openWindow('projects'); showStartMenu = false"
           class="menu-item w-full text-left px-4 py-2 hover:bg-[#000080] hover:text-white flex items-center gap-3 border-b border-gray-400"
         >
-          <span class="text-lg">💼</span>
+          <Briefcase/>
           <span>Projects</span>
         </button>
         <button
           @click="openWindow('experience'); showStartMenu = false"
           class="menu-item w-full text-left px-4 py-2 hover:bg-[#000080] hover:text-white flex items-center gap-3 border-b border-gray-400"
         >
-          <span class="text-lg">🎓</span>
+          <GraduationCap/>
           <span>Experience</span>
         </button>
         <button
           @click="openWindow('contact'); showStartMenu = false"
           class="menu-item w-full text-left px-4 py-2 hover:bg-[#000080] hover:text-white flex items-center gap-3 border-b border-gray-400"
         >
-          <span class="text-lg">📧</span>
+          <Mail/>
           <span>Contact</span>
+        </button>
+        <button
+          @click="openWindow('blog'); showStartMenu = false"
+          class="menu-item w-full text-left px-4 py-2 hover:bg-[#000080] hover:text-white flex items-center gap-3 border-b border-gray-400"
+        >
+          <FileText/>
+          <span>Blog</span>
+        </button>
+        <button
+          @click="showAbout = true; showStartMenu = false"
+          class="menu-item w-full text-left px-4 py-2 hover:bg-[#000080] hover:text-white flex items-center gap-3 border-b border-gray-400"
+        >
+          <Info/>
+          <span>About ShrimpOS...</span>
         </button>
         <button
           @click="startShutdown"
           class="menu-item w-full text-left px-4 py-2 hover:bg-[#000080] hover:text-white flex items-center gap-3"
         >
-          <span class="text-lg">🔌</span>
+          <Power/>
           <span>Shut Down...</span>
         </button>
       </div>
     </div>
+
+    <!-- About ShrimpOS Dialog -->
+    <AboutShrimpOS :is-open="showAbout" @close="showAbout = false" />
 
     <!-- Shutdown Screen -->
     <div
       v-if="isShuttingDown"
       class="absolute inset-0 bg-black flex flex-col items-center justify-center z-[100]"
     >
-      <div class="text-center">
-        <h2 class="text-4xl font-bold mb-8" style="color: #ff8c00;">{{ shutdownMessage }}</h2>
-        <div v-if="shutdownStage === 'shutting-down'" class="w-64 h-2 bg-gray-800 overflow-hidden mx-auto">
+      <div class="text-center flex flex-col items-center">
+        <h2 class="text-4xl font-bold mb-8 text-white">{{ shutdownMessage }}</h2>
+        <div v-if="shutdownStage === 'shutting-down'" class="w-64 h-2 bg-gray-800 overflow-hidden">
           <div class="loading-bar h-full bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500"></div>
         </div>
       </div>
@@ -205,38 +244,41 @@
       </button>
 
       <div class="flex-1 flex gap-1 ml-2">
-        <button
-          v-if="windows.about"
-          class="taskbar-item px-3 py-1 bg-[#c0c0c0] border-2 text-sm"
-          :class="activeWindow === 'about' ? 'border-[#808080] border-r-white border-b-white' : 'border-white border-r-[#808080] border-b-[#808080]'"
+        <TaskbarButton
+          :icon="User"
+          label="About Me"
+          :isOpen="windows.about"
+          :isActive="activeWindow === 'about'"
           @click="activeWindow = 'about'"
-        >
-          👤 About Me
-        </button>
-        <button
-          v-if="windows.projects"
-          class="taskbar-item px-3 py-1 bg-[#c0c0c0] border-2 text-sm"
-          :class="activeWindow === 'projects' ? 'border-[#808080] border-r-white border-b-white' : 'border-white border-r-[#808080] border-b-[#808080]'"
+        />
+        <TaskbarButton
+          :icon="Briefcase"
+          label="Projects"
+          :isOpen="windows.projects"
+          :isActive="activeWindow === 'projects'"
           @click="activeWindow = 'projects'"
-        >
-          💼 Projects
-        </button>
-        <button
-          v-if="windows.experience"
-          class="taskbar-item px-3 py-1 bg-[#c0c0c0] border-2 text-sm"
-          :class="activeWindow === 'experience' ? 'border-[#808080] border-r-white border-b-white' : 'border-white border-r-[#808080] border-b-[#808080]'"
+        />
+        <TaskbarButton
+          :icon="GraduationCap"
+          label="Experience"
+          :isOpen="windows.experience"
+          :isActive="activeWindow === 'experience'"
           @click="activeWindow = 'experience'"
-        >
-          🎓 Experience
-        </button>
-        <button
-          v-if="windows.contact"
-          class="taskbar-item px-3 py-1 bg-[#c0c0c0] border-2 text-sm"
-          :class="activeWindow === 'contact' ? 'border-[#808080] border-r-white border-b-white' : 'border-white border-r-[#808080] border-b-[#808080]'"
+        />
+        <TaskbarButton
+          :icon="Mail"
+          label="Contact"
+          :isOpen="windows.contact"
+          :isActive="activeWindow === 'contact'"
           @click="activeWindow = 'contact'"
-        >
-          📧 Contact
-        </button>
+        />
+        <TaskbarButton
+          :icon="FileText"
+          label="Blog"
+          :isOpen="windows.blog"
+          :isActive="activeWindow === 'blog'"
+          @click="activeWindow = 'blog'"
+        />
       </div>
 
       <div class="time px-2 border-2 border-[#808080] border-t-white border-l-white text-sm">
@@ -247,6 +289,7 @@
 </template>
 
 <script setup lang="ts">
+import { User, Briefcase, GraduationCap, Mail, FileText, Power, Info } from 'lucide-vue-next';
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import Window from '~/components/Window.vue'
 import DesktopIcon from '~/components/DesktopIcon.vue'
@@ -255,12 +298,15 @@ import About from '~/components/About.vue'
 import Projects from '~/components/Projects.vue'
 import Experience from '~/components/Experience.vue'
 import Contact from '~/components/Contact.vue'
+import Blog from '~/components/Blog.vue'
+import AboutShrimpOS from '~/components/AboutShrimpOS.vue'
 
 const windows = reactive({
   about: false,
   projects: false,
   experience: false,
   contact: false,
+  blog: false,
 })
 
 const activeWindow = ref<string | null>(null)
@@ -271,6 +317,7 @@ const loadingProgress = ref(0)
 const loadingMessage = ref('Loading Desktop...')
 const visibleIcons = ref(0)
 const showStartMenu = ref(false)
+const showAbout = ref(false)
 const isShuttingDown = ref(false)
 const shutdownStage = ref<'shutting-down' | 'safe-to-turn-off'>('shutting-down')
 const shutdownMessage = ref('Shutting down...')
@@ -303,7 +350,7 @@ const startShutdown = async () => {
   await new Promise(resolve => setTimeout(resolve, 1500))
 
   // Hide icons one by one (in reverse)
-  for (let i = 4; i >= 1; i--) {
+  for (let i = 5; i >= 1; i--) {
     visibleIcons.value = i - 1
     await new Promise(resolve => setTimeout(resolve, 200))
   }
@@ -360,6 +407,7 @@ const startDesktopLoading = async () => {
 
   loadingMessage.value = 'Preparing workspace...'
   await new Promise(resolve => setTimeout(resolve, 400))
+  visibleIcons.value = 5
   loadingProgress.value = 100
 
   await new Promise(resolve => setTimeout(resolve, 300))

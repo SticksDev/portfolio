@@ -14,7 +14,11 @@ export default defineNuxtConfig({
         '@tresjs/nuxt',
     ],
 
-    css: ['./app/assets/css/main.css'],
+    nitro: {
+        preset: 'cloudflare_pages',
+    },
+
+    css: ['./app/assets/css/main.css', './app/assets/css/blog-prose.css'],
     vite: {
         plugins: [tailwindcss()],
     },
@@ -38,7 +42,7 @@ export default defineNuxtConfig({
                 },
                 {
                     property: 'og:image',
-                    content: 'https://img.sticks.ovh/stickspfpnew.png',
+                    content: 'https://img.sticks.ovh/sticksnewpfp',
                 },
                 { property: 'twitter:card', content: 'summary_large_image' },
                 { property: 'twitter:url', content: 'https://sticksdev.tech' },
@@ -49,14 +53,14 @@ export default defineNuxtConfig({
                 },
                 {
                     property: 'twitter:image',
-                    content: 'https://sticksdev.tech/images/meta-tags.png',
+                    content: 'https://img.sticks.ovh/sticksnewpfp',
                 },
             ],
             link: [
                 {
                     rel: 'icon',
                     type: 'image/png',
-                    href: 'https://img.sticks.ovh/stickspfpnew.png',
+                    href: 'https://img.sticks.ovh/sticksnewpfp',
                 },
             ],
         },

@@ -1,7 +1,10 @@
 <template>
   <div class="min-h-screen min-w-screen bg-black flex items-center justify-center overflow-hidden">
     <!-- BIOS Screen -->
-    <div v-if="bootStage === 'bios'" class="w-full h-screen bg-black text-left p-8 font-mono text-sm text-gray-300">
+    <div v-if="bootStage === 'bios'" class="w-full h-screen bg-black text-left p-8 font-mono text-sm text-gray-300 relative">
+      <div class="absolute top-2 right-2 text-xs text-gray-500 animate-pulse">
+        Press ESC to skip
+      </div>
       <div class="mb-4">
         <p class="text-white font-bold">ShrimpBIOS v2.0</p>
         <p class="text-gray-500">Copyright (C) {{ new Date().getFullYear() }}, SticksDev Inc.</p>
@@ -12,12 +15,15 @@
       </div>
 
       <div v-if="biosMessages.length >= 7" class="mt-8">
-        <p class="animate-pulse">Press any key to boot from HDD...</p>
+        <p class="animate-pulse">Press any key to boot from HDD or ESC to skip...</p>
       </div>
     </div>
 
     <!-- Windows XP Style Boot Screen -->
     <div v-else-if="bootStage === 'loading'" class="w-full h-screen flex flex-col items-center justify-center relative">
+      <div class="absolute top-4 right-4 text-xs text-gray-500 animate-pulse">
+        Press ESC to skip
+      </div>
       <!-- Logo -->
       <div class="mb-16 text-center">
         <h1 class="text-6xl font-bold text-white mb-2" style="font-family: 'Trebuchet MS', sans-serif; letter-spacing: -2px;">
@@ -55,9 +61,7 @@
 
           <!-- Power icon -->
           <div class="relative z-10">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 text-white">
-               <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
-              </svg>
+           <Power color="white" :size="45" />
           </div>
 
           <!-- Shine effect -->
@@ -70,6 +74,7 @@
 </template>
 
 <script setup lang="ts">
+import { Power } from 'lucide-vue-next';
 import { ref, onMounted } from 'vue'
 
 const bootStage = ref<'off' | 'bios' | 'loading'>('off')
@@ -103,13 +108,14 @@ const startBootSequence = async () => {
 
       bootAudio!.play().catch(() => {
         // Audio autoplay blocked, continue without sound
+        console.warn('Boot audio playback was blocked, continuing without sound.')
         resolve()
       })
 
-      // Fallback if audio doesn't end (increased to 15 seconds)
+      // Play 5 seconds of audio then resolve
       setTimeout(() => {
         resolve()
-      }, 15000)
+      }, 4000) 
     })
   }
 
@@ -132,7 +138,19 @@ const startBootSequence = async () => {
     await new Promise(resolve => setTimeout(resolve, 3000))
   }
 
-  // Navigate to desktop
+  // Navigate to desktop and fade out audio
+  if (bootAudio) {
+    const fadeOutInterval = setInterval(() => {
+      if (bootAudio!.volume > 0.05) {
+        bootAudio!.volume -= 0.05
+      } else {
+        bootAudio!.volume = 0
+        bootAudio!.pause()
+        clearInterval(fadeOutInterval)
+      }
+    }, 200)
+  }
+
   navigateTo('/desktop')
 }
 
@@ -142,11 +160,22 @@ onMounted(() => {
     bootAudio = new Audio('/bootup.mp3')
   }
 
-  // Listen for keypress during BIOS screen
-  const handleKeyPress = () => {
-    if (bootStage.value === 'bios' && biosMessages.value.length >= 7) {
-      bootStage.value = 'loading'
+  // Listen for keypress during boot screens
+  const handleKeyPress = (e: KeyboardEvent) => {
+    // ESC key to skip to desktop
+    if (e.key === 'Escape' && (bootStage.value === 'bios' || bootStage.value === 'loading')) {
+      // Stop any playing audio
+      if (bootAudio) {
+        bootAudio.pause()
+        bootAudio.currentTime = 0
+      }
+      // Go directly to desktop
+      navigateTo('/desktop')
       document.removeEventListener('keydown', handleKeyPress)
+    }
+    // Any key during BIOS to continue to loading
+    else if (bootStage.value === 'bios' && biosMessages.value.length >= 7) {
+      bootStage.value = 'loading'
     }
   }
   document.addEventListener('keydown', handleKeyPress)

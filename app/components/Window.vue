@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
     ref="windowRef"
@@ -17,9 +18,7 @@
         class="close-btn w-5 h-5 bg-[#c0c0c0] border border-white border-b-[#808080] border-r-[#808080] flex items-center justify-center text-xs font-bold hover:bg-[#dfdfdf]"
         @click="$emit('close')"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-        </svg>
+         <X :size="60" />
       </button>
     </div>
 
@@ -31,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import { X } from 'lucide-vue-next';
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{

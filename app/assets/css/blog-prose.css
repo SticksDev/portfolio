@@ -1,0 +1,196 @@
+/* Nuxt Content Blog Prose Styling 
+
+This file provides styles for blog content rendered via Nuxt Content.
+It includes general typography styles as well as specific styles
+for Shiki code blocks.
+
+*/
+
+.blog-prose {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.8;
+    color: #1a1a1a;
+}
+
+/* Headings */
+.blog-prose :is(h1, h2, h3, h4) {
+    color: #000080;
+    font-weight: 700;
+}
+
+.blog-prose h1 {
+    font-size: 2.25rem;
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #000080;
+}
+
+.blog-prose h2 {
+    font-size: 1.875rem;
+    margin: 2rem 0 0.875rem;
+    padding-bottom: 0.375rem;
+    border-bottom: 2px solid #808080;
+}
+
+.blog-prose h3 {
+    font-size: 1.5rem;
+    margin: 1.75rem 0 0.75rem;
+}
+
+.blog-prose h4 {
+    font-size: 1.25rem;
+    margin: 1.5rem 0 0.5rem;
+}
+
+/* Paragraphs + lists */
+.blog-prose p {
+    margin: 0 0 1.25rem;
+    font-size: 1.0625rem;
+}
+
+.blog-prose :is(ul, ol) {
+    margin: 0 0 1.25rem 1.5rem;
+}
+
+.blog-prose li {
+    margin-bottom: 0.5rem;
+    line-height: 1.75;
+}
+
+/* Links */
+.blog-prose a {
+    color: #0000ff;
+    text-decoration: underline;
+}
+
+.blog-prose a:hover {
+    color: #0066ff;
+    background: #f0f0ff;
+}
+
+.blog-prose a:visited {
+    color: #800080;
+}
+
+/* Strong / emphasis */
+.blog-prose strong {
+    font-weight: 700;
+    color: #000;
+}
+
+.blog-prose em {
+    font-style: italic;
+}
+
+/* Horizontal rule */
+.blog-prose hr {
+    border: none;
+    border-top: 2px solid #808080;
+    margin: 2rem 0;
+}
+
+/* Images */
+.blog-prose img {
+    border: 2px solid #808080;
+    border-radius: 4px;
+    margin: 1.5rem 0;
+    max-width: 100%;
+    height: auto;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Blockquote */
+.blog-prose blockquote {
+    border-left: 4px solid #000080;
+    background: #f0f0f0;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-prose blockquote p {
+    margin-bottom: 0.5rem;
+}
+
+.blog-prose blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Tables */
+.blog-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    border: 2px solid #808080;
+}
+
+.blog-prose th {
+    background: #000080;
+    color: #fff;
+    font-weight: 700;
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #808080;
+}
+
+.blog-prose td {
+    padding: 0.75rem;
+    border: 1px solid #808080;
+}
+
+.blog-prose tr:nth-child(even) {
+    background: #f5f5f5;
+}
+
+/* inline code: code that is NOT within a pre tag */
+.blog-prose :not(pre) > code {
+    background: #f5f5f5;
+    border: 1px solid #d0d0d0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #d63384;
+}
+
+/* =========================================================
+   Shiki code blocks
+   ========================================================= */
+.blog-prose pre.shiki,
+.blog-prose pre.shiki * {
+    background-image: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+/* The Shiki container */
+.blog-prose pre.shiki {
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    overflow-x: auto;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+    font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Shiki usually includes a <code> inside the <pre> */
+.blog-prose pre.shiki code {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+.blog-prose pre.shiki .line {
+    display: block;
+    min-height: 1.4em;
+}
