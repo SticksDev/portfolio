@@ -1,6 +1,9 @@
-'use client';
+<template>
+  <pre class="text-terminal font-mono whitespace-pre-wrap">{{ aboutTxt }}</pre>
+</template>
 
-const AboutTxt = `
+<script setup lang="ts">
+const aboutTxt = `
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@    ---- Reading file about_me.inf ----
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@    ---- File read successful ----
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@    Name: SticksDev (Tanner Sommers)
@@ -16,8 +19,5 @@ const AboutTxt = `
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@    opportunities to grow and expand my skillset. Feel free to reach out to me
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@    if you have any questions or just want to chat!
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@    ---- End of file ----
-`;
-
-export default function About() {
-    return <pre className='text-white font-mono'>{AboutTxt}</pre>;
-}
+`
+</script>
