@@ -1,7 +1,11 @@
 <template>
-  <div class="desktop-container min-h-screen bg-[#008080] relative overflow-hidden" :class="{ 'hourglass-cursor': isLoading || isDesktopLoading }">
+  <div
+    class="desktop-container min-h-screen bg-[#008080] relative overflow-hidden"
+    :class="{ 'hourglass-cursor': isLoading || isDesktopLoading }"
+    @click="handleDesktopClick"
+  >
     <!-- Desktop Background -->
-    <div class="absolute inset-0 flex flex-col items-center justify-center opacity-50 pointer-events-none">
+    <div class="desktop-background absolute inset-0 flex flex-col items-center justify-center opacity-50 pointer-events-none">
       <div class="w-[600px] h-[600px] pointer-events-auto">
         <ClientOnly>
           <ShrimpRender />
@@ -37,12 +41,14 @@
     </div>
 
     <!-- Desktop Icons -->
-    <div class="desktop-icons absolute top-4 left-4 flex flex-col gap-2">
+    <div class="desktop-icons absolute top-4 left-4 flex flex-col gap-2 md:gap-4">
       <Transition name="icon-fade">
         <DesktopIcon
           v-if="visibleIcons >= 1"
           :icon="User"
           label="About Me"
+          :is-selected="selectedIcon === 'about'"
+          @click="selectIcon('about')"
           @dblclick="openWindow('about')"
         />
       </Transition>
@@ -51,6 +57,8 @@
           v-if="visibleIcons >= 2"
           :icon="Briefcase"
           label="Projects"
+          :is-selected="selectedIcon === 'projects'"
+          @click="selectIcon('projects')"
           @dblclick="openWindow('projects')"
         />
       </Transition>
@@ -59,6 +67,8 @@
           v-if="visibleIcons >= 3"
           :icon="GraduationCap"
           label="Experience"
+          :is-selected="selectedIcon === 'experience'"
+          @click="selectIcon('experience')"
           @dblclick="openWindow('experience')"
         />
       </Transition>
@@ -67,6 +77,8 @@
           v-if="visibleIcons >= 4"
           :icon="Mail"
           label="Contact"
+          :is-selected="selectedIcon === 'contact'"
+          @click="selectIcon('contact')"
           @dblclick="openWindow('contact')"
         />
       </Transition>
@@ -75,6 +87,8 @@
           v-if="visibleIcons >= 5"
           :icon="FileText"
           label="Blog"
+          :is-selected="selectedIcon === 'blog'"
+          @click="selectIcon('blog')"
           @dblclick="openWindow('blog')"
         />
       </Transition>
@@ -89,8 +103,10 @@
       :width="1200"
       :height="550"
       :is-active="activeWindow === 'about'"
+      :is-minimized="minimizedWindows.about"
       @close="closeWindow('about')"
       @activate="activeWindow = 'about'"
+      @minimize="minimizeWindow('about')"
     >
       <About />
     </Window>
@@ -103,8 +119,10 @@
       :width="900"
       :height="650"
       :is-active="activeWindow === 'projects'"
+      :is-minimized="minimizedWindows.projects"
       @close="closeWindow('projects')"
       @activate="activeWindow = 'projects'"
+      @minimize="minimizeWindow('projects')"
     >
       <Projects />
     </Window>
@@ -117,8 +135,10 @@
       :width="1200"
       :height="700"
       :is-active="activeWindow === 'experience'"
+      :is-minimized="minimizedWindows.experience"
       @close="closeWindow('experience')"
       @activate="activeWindow = 'experience'"
+      @minimize="minimizeWindow('experience')"
     >
       <Experience />
     </Window>
@@ -131,8 +151,10 @@
       :width="700"
       :height="500"
       :is-active="activeWindow === 'contact'"
+      :is-minimized="minimizedWindows.contact"
       @close="closeWindow('contact')"
       @activate="activeWindow = 'contact'"
+      @minimize="minimizeWindow('contact')"
     >
       <Contact />
     </Window>
@@ -145,8 +167,10 @@
       :width="1000"
       :height="650"
       :is-active="activeWindow === 'blog'"
+      :is-minimized="minimizedWindows.blog"
       @close="closeWindow('blog')"
       @activate="activeWindow = 'blog'"
+      @minimize="minimizeWindow('blog')"
     >
       <Blog />
     </Window>
@@ -154,7 +178,7 @@
     <!-- Start Menu -->
     <div
       v-if="showStartMenu"
-      class="start-menu absolute bottom-10 left-0 w-64 bg-[#c0c0c0] border-2 border-white border-r-[#808080] border-b-[#808080] shadow-2xl z-50"
+      class="start-menu absolute bottom-10 left-0 w-64 md:w-64 max-w-[calc(100vw-20px)] bg-[#c0c0c0] border-2 border-white border-r-[#808080] border-b-[#808080] shadow-2xl z-50"
     >
       <!-- Start Menu Header -->
       <div class="bg-gradient-to-r from-[#000080] to-[#1084d0] text-white px-3 py-2 font-bold text-sm flex items-center gap-2">
@@ -233,55 +257,55 @@
     </div>
 
     <!-- Taskbar -->
-    <div class="taskbar absolute bottom-0 left-0 right-0 h-10 bg-[#c0c0c0] border-t-2 border-white flex items-center px-2 shadow-lg z-50">
+    <div class="taskbar absolute bottom-0 left-0 right-0 h-10 md:h-10 bg-[#c0c0c0] border-t-2 border-white flex items-center px-1 md:px-2 shadow-lg z-50">
       <button
         @click="showStartMenu = !showStartMenu"
-        class="start-button px-3 py-1 bg-[#c0c0c0] border-2 font-bold flex items-center gap-2 hover:bg-[#dfdfdf]"
+        class="start-button px-2 md:px-3 py-1 bg-[#c0c0c0] border-2 font-bold flex items-center gap-1 md:gap-2 hover:bg-[#dfdfdf] text-xs md:text-base"
         :class="showStartMenu ? 'border-[#808080] border-r-white border-b-white' : 'border-white border-r-[#808080] border-b-[#808080]'"
       >
-        <span class="text-lg">🦐</span>
-        <span>Start</span>
+        <span class="text-base md:text-lg">🦐</span>
+        <span class="hidden sm:inline">Start</span>
       </button>
 
-      <div class="flex-1 flex gap-1 ml-2">
+      <div class="flex-1 flex gap-1 ml-1 md:ml-2 overflow-x-auto">
         <TaskbarButton
           :icon="User"
           label="About Me"
           :isOpen="windows.about"
-          :isActive="activeWindow === 'about'"
-          @click="activeWindow = 'about'"
+          :isActive="activeWindow === 'about' && !minimizedWindows.about"
+          @click="toggleMinimize('about')"
         />
         <TaskbarButton
           :icon="Briefcase"
           label="Projects"
           :isOpen="windows.projects"
-          :isActive="activeWindow === 'projects'"
-          @click="activeWindow = 'projects'"
+          :isActive="activeWindow === 'projects' && !minimizedWindows.projects"
+          @click="toggleMinimize('projects')"
         />
         <TaskbarButton
           :icon="GraduationCap"
           label="Experience"
           :isOpen="windows.experience"
-          :isActive="activeWindow === 'experience'"
-          @click="activeWindow = 'experience'"
+          :isActive="activeWindow === 'experience' && !minimizedWindows.experience"
+          @click="toggleMinimize('experience')"
         />
         <TaskbarButton
           :icon="Mail"
           label="Contact"
           :isOpen="windows.contact"
-          :isActive="activeWindow === 'contact'"
-          @click="activeWindow = 'contact'"
+          :isActive="activeWindow === 'contact' && !minimizedWindows.contact"
+          @click="toggleMinimize('contact')"
         />
         <TaskbarButton
           :icon="FileText"
           label="Blog"
           :isOpen="windows.blog"
-          :isActive="activeWindow === 'blog'"
-          @click="activeWindow = 'blog'"
+          :isActive="activeWindow === 'blog' && !minimizedWindows.blog"
+          @click="toggleMinimize('blog')"
         />
       </div>
 
-      <div class="time px-2 border-2 border-[#808080] border-t-white border-l-white text-sm">
+      <div class="time px-1 md:px-2 border-2 border-[#808080] border-t-white border-l-white text-xs md:text-sm">
         {{ currentTime }}
       </div>
     </div>
@@ -309,7 +333,16 @@ const windows = reactive({
   blog: false,
 })
 
+const minimizedWindows = reactive({
+  about: false,
+  projects: false,
+  experience: false,
+  contact: false,
+  blog: false,
+})
+
 const activeWindow = ref<string | null>(null)
+const selectedIcon = ref<string | null>(null)
 const isLoading = ref(false)
 const currentTime = ref('')
 const isDesktopLoading = ref(true)
@@ -322,13 +355,42 @@ const isShuttingDown = ref(false)
 const shutdownStage = ref<'shutting-down' | 'safe-to-turn-off'>('shutting-down')
 const shutdownMessage = ref('Shutting down...')
 
+const selectIcon = (iconName: string) => {
+  selectedIcon.value = iconName
+}
+
+const handleDesktopClick = (e: Event) => {
+  // Check if click was directly on the desktop (not on icons, windows, taskbar, etc.)
+  const target = e.target as HTMLElement
+
+  // Deselect icons when clicking on desktop background or the shrimp container
+  if (
+    target.classList.contains('desktop-container') ||
+    target.classList.contains('desktop-background') ||
+    target.closest('.desktop-background')
+  ) {
+    selectedIcon.value = null
+  }
+}
+
 const openWindow = (windowName: keyof typeof windows) => {
+  // Clear icon selection when opening window
+  selectedIcon.value = null
+
+  // If window is minimized, restore it immediately
+  if (minimizedWindows[windowName]) {
+    minimizedWindows[windowName] = false
+    activeWindow.value = windowName
+    return
+  }
+
   // Show hourglass cursor
   isLoading.value = true
 
   // Simulate loading delay
   setTimeout(() => {
     windows[windowName] = true
+    minimizedWindows[windowName] = false
     activeWindow.value = windowName
     isLoading.value = false
   }, 500)
@@ -336,8 +398,30 @@ const openWindow = (windowName: keyof typeof windows) => {
 
 const closeWindow = (windowName: keyof typeof windows) => {
   windows[windowName] = false
+  minimizedWindows[windowName] = false
   if (activeWindow.value === windowName) {
     activeWindow.value = null
+  }
+}
+
+const minimizeWindow = (windowName: keyof typeof windows) => {
+  minimizedWindows[windowName] = true
+  if (activeWindow.value === windowName) {
+    activeWindow.value = null
+  }
+}
+
+const toggleMinimize = (windowName: keyof typeof windows) => {
+  if (minimizedWindows[windowName]) {
+    // Restore the window
+    minimizedWindows[windowName] = false
+    activeWindow.value = windowName
+  } else if (activeWindow.value === windowName) {
+    // Minimize if it's the active window
+    minimizeWindow(windowName)
+  } else {
+    // Just activate if it's not active
+    activeWindow.value = windowName
   }
 }
 

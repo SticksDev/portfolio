@@ -2,7 +2,7 @@
   <Transition name="taskbar-fade">
     <button
       v-if="isOpen"
-      class="taskbar-item px-3 py-1 border-2 text-sm"
+      class="taskbar-item px-1 md:px-3 py-1 border-2 text-xs md:text-sm min-w-0"
       :class="[
         isActive
           ? 'bg-[#000080] text-white border-[#808080] border-r-white border-b-white active-button'
@@ -14,8 +14,9 @@
         <component
           :is="icon"
           :size="16"
+          class="flex-shrink-0"
         />
-        <span>{{ label }}</span>
+        <span class="hidden sm:inline truncate">{{ label }}</span>
       </div>
     </button>
   </Transition>
