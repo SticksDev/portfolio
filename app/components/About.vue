@@ -5,26 +5,26 @@
     <h1 class="text-3xl font-bold mb-6 text-[#000080] border-b-2 border-[#808080] pb-3">About Me</h1>
 
     <!-- Profile Card -->
-    <div class="bg-white border-2 border-[#808080] p-6 shadow-md mb-6">
-      <div class="flex items-start gap-6 mb-6">
-        <div class="profile-avatar w-32 h-32 bg-[#000080] border-2 border-[#808080] flex items-center justify-center">
-          <User :size="64" color="#ffffff" />
+    <div class="bg-white border-2 border-[#808080] p-4 md:p-6 shadow-md mb-6">
+      <div class="flex flex-col sm:flex-row items-start gap-4 md:gap-6 mb-6">
+        <div class="profile-avatar w-24 h-24 md:w-32 md:h-32 bg-[#000080] border-2 border-[#808080] flex items-center justify-center flex-shrink-0">
+          <User :size="64" color="#ffffff" class="w-12 h-12 md:w-16 md:h-16" />
         </div>
-        <div class="flex-1">
-          <h2 class="text-3xl font-bold text-[#000080] mb-2">SticksDev</h2>
-          <p class="text-xl text-gray-700 mb-3">Tanner Sommers</p>
-          <div class="space-y-2 text-gray-700">
+        <div class="flex-1 min-w-0">
+          <h2 class="text-2xl md:text-3xl font-bold text-[#000080] mb-2">SticksDev</h2>
+          <p class="text-lg md:text-xl text-gray-700 mb-3">Tanner Sommers</p>
+          <div class="space-y-2 text-sm md:text-base text-gray-700">
             <div class="flex items-center gap-2">
-              <span class="font-semibold min-w-25">Age:</span>
+              <span class="font-semibold min-w-20 md:min-w-25">Age:</span>
               <span>22</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="font-semibold min-w-25">Location:</span>
-              <span>United States (UTC-5)</span>
+              <span class="font-semibold min-w-20 md:min-w-25">Location:</span>
+              <span class="break-words">United States (UTC-5)</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="font-semibold min-w-25">Occupation:</span>
-              <span>Software Engineer / Freelancer</span>
+              <span class="font-semibold min-w-20 md:min-w-25">Occupation:</span>
+              <span class="break-words">Software Engineer / Freelancer</span>
             </div>
           </div>
         </div>

@@ -13,15 +13,15 @@
       <!-- Email Card -->
       <a
         href="mailto:tanner@teamhydra.dev"
-        class="contact-card bg-white border-2 border-[#808080] p-5 shadow-md flex items-start gap-4 hover:border-[#000080] transition-colors group"
+        class="contact-card bg-white border-2 border-[#808080] p-4 md:p-5 shadow-md flex items-start gap-3 md:gap-4 hover:border-[#000080] transition-colors group"
       >
-        <div class="contact-icon bg-[#000080] border-2 border-[#808080] w-16 h-16 flex items-center justify-center group-hover:bg-[#1084d0] transition-colors">
-          <Mail :size="32" color="#ffffff" />
+        <div class="contact-icon bg-[#000080] border-2 border-[#808080] w-12 h-12 md:w-16 md:h-16 shrink-0 flex items-center justify-center group-hover:bg-[#1084d0] transition-colors">
+          <Mail :size="24" class="md:w-8 md:h-8" color="#ffffff" />
         </div>
-        <div class="flex-1">
-          <h3 class="text-xl font-bold text-[#000080] mb-1">Email</h3>
-          <p class="text-gray-600 text-sm mb-2">Best for professional inquiries and projects</p>
-          <p class="text-[#000080] font-mono text-lg">tanner@teamhydra.dev</p>
+        <div class="flex-1 min-w-0">
+          <h3 class="text-lg md:text-xl font-bold text-[#000080] mb-1">Email</h3>
+          <p class="text-gray-600 text-xs md:text-sm mb-2">Best for professional inquiries and projects</p>
+          <p class="text-[#000080] font-mono text-sm md:text-lg break-all">tanner@teamhydra.dev</p>
         </div>
       </a>
 
@@ -29,19 +29,19 @@
       <a
         href="https://discord.gg/zira"
         target="_blank"
-        class="contact-card bg-white border-2 border-[#808080] p-5 shadow-md flex items-start gap-4 hover:border-[#000080] transition-colors group"
+        class="contact-card bg-white border-2 border-[#808080] p-4 md:p-5 shadow-md flex items-start gap-3 md:gap-4 hover:border-[#000080] transition-colors group"
       >
-        <div class="contact-icon bg-[#5865F2] border-2 border-[#808080] w-16 h-16 flex items-center justify-center group-hover:bg-[#4752C4] transition-colors">
-          <DiscordIcon :size="32" style="color: white" />
+        <div class="contact-icon bg-[#5865F2] border-2 border-[#808080] w-12 h-12 md:w-16 md:h-16 shrink-0 flex items-center justify-center group-hover:bg-[#4752C4] transition-colors">
+          <DiscordIcon :size="24" class="md:w-8 md:h-8" style="color: white" />
         </div>
-        <div class="flex-1">
-          <h3 class="text-xl font-bold text-[#000080] mb-1">Discord</h3>
-          <p class="text-gray-600 text-sm mb-2">Join the Discord server for casual conversations</p>
-          <p class="text-gray-700 mb-1">
-            <span class="font-semibold">Username:</span> <span class="font-mono">sticksdev</span>
+        <div class="flex-1 min-w-0">
+          <h3 class="text-lg md:text-xl font-bold text-[#000080] mb-1">Discord</h3>
+          <p class="text-gray-600 text-xs md:text-sm mb-2">Join the Discord server for casual conversations</p>
+          <p class="text-gray-700 text-sm md:text-base mb-1">
+            <span class="font-semibold">Username:</span> <span class="font-mono break-all">sticksdev</span>
           </p>
-          <p class="text-gray-700">
-            <span class="font-semibold">Channel:</span> #other-support
+          <p class="text-gray-700 text-sm md:text-base">
+            <span class="font-semibold">Channel:</span> <span class="break-all">#other-support</span>
           </p>
         </div>
       </a>
@@ -50,15 +50,15 @@
       <a
         href="https://github.com/SticksDev"
         target="_blank"
-        class="contact-card bg-white border-2 border-[#808080] p-5 shadow-md flex items-start gap-4 hover:border-[#000080] transition-colors group"
+        class="contact-card bg-white border-2 border-[#808080] p-4 md:p-5 shadow-md flex items-start gap-3 md:gap-4 hover:border-[#000080] transition-colors group"
       >
-        <div class="contact-icon bg-[#24292e] border-2 border-[#808080] w-16 h-16 flex items-center justify-center group-hover:bg-[#1a1e22] transition-colors text-white">
-          <GitHubIcon :size="32" style="color: white" />
+        <div class="contact-icon bg-[#24292e] border-2 border-[#808080] w-12 h-12 md:w-16 md:h-16 shrink-0 flex items-center justify-center group-hover:bg-[#1a1e22] transition-colors text-white">
+          <GitHubIcon :size="24" class="md:w-8 md:h-8" style="color: white" />
         </div>
-        <div class="flex-1">
-          <h3 class="text-xl font-bold text-[#000080] mb-1">GitHub</h3>
-          <p class="text-gray-600 text-sm mb-2">Check out my projects and contributions</p>
-          <p class="text-[#000080] font-mono">@SticksDev</p>
+        <div class="flex-1 min-w-0">
+          <h3 class="text-lg md:text-xl font-bold text-[#000080] mb-1">GitHub</h3>
+          <p class="text-gray-600 text-xs md:text-sm mb-2">Check out my projects and contributions</p>
+          <p class="text-[#000080] font-mono text-sm md:text-base break-all">@SticksDev</p>
         </div>
       </a>
     </div>

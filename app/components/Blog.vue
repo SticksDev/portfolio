@@ -65,74 +65,17 @@
       <p class="text-yellow-600 text-sm">Check back later for updates!</p>
     </div>
 
-    <!-- Blog Post Modal -->
-    <Teleport to="body">
-      <div v-if="selectedPost" ref="modalRef" class="fixed z-60" :style="modalStyle">
-        <div
-          class="bg-[#c0c0c0] border-2 border-white border-r-[#808080] border-b-[#808080] shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col"
-        >
-          <!-- Modal Title Bar -->
-          <div
-            class="bg-linear-to-r from-[#000080] to-[#1084d0] px-2 py-1 flex items-center justify-between cursor-move select-none"
-            @mousedown="startDrag"
-          >
-            <span class="text-white font-bold text-sm">{{ selectedPost.title }}</span>
-            <button
-              class="w-5 h-5 bg-[#c0c0c0] border border-white border-b-[#808080] border-r-[#808080] flex items-center justify-center text-xs font-bold hover:bg-[#dfdfdf]"
-              @click="selectedPost = null"
-            >
-              <X :size="16" />
-            </button>
-          </div>
-
-          <!-- Modal Content -->
-          <div class="bg-white border-2 border-[#808080] border-t-white border-l-white overflow-auto flex-1">
-            <div class="max-w-3xl mx-auto px-8 py-8">
-              <div class="mb-6 pb-6 border-b-2 border-[#808080]">
-                <h1 class="text-4xl font-bold mb-4 text-[#000080]">{{ selectedPost.title }}</h1>
-                <div class="flex items-center gap-4 text-sm text-gray-600">
-                  <span class="flex items-center gap-1.5 bg-[#f0f0f0] px-3 py-1.5 border border-[#808080]">
-                    <Calendar :size="16" />
-                    {{ formatDate(selectedPost.date) }}
-                  </span>
-                  <span
-                    v-if="selectedPost.tags && selectedPost.tags.length > 0"
-                    class="flex items-center gap-1.5 bg-[#f0f0f0] px-3 py-1.5 border border-[#808080]"
-                  >
-                    <Tag :size="16" />
-                    {{ selectedPost.tags.join(', ') }}
-                  </span>
-                </div>
-              </div>
-
-              <!-- key change: a single reusable class -->
-              <ContentRenderer :value="selectedPost" class="blog-prose">
-                <template #empty>
-                  <p class="text-gray-500 text-center py-8">No content available.</p>
-                </template>
-              </ContentRenderer>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { X, Calendar, Tag, ArrowRight, FileText, Loader2, AlertCircle, Inbox } from 'lucide-vue-next'
+import { Calendar, Tag, ArrowRight, FileText, Loader2, AlertCircle, Inbox } from 'lucide-vue-next'
 import type { BlogCollectionItem } from '@nuxt/content'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-const selectedPost = ref<BlogCollectionItem | null>(null)
-const selectedPostPath = ref<string | null>(null)
-const modalRef = ref<HTMLElement | null>(null)
-
-const isDragging = ref(false)
-const dragStartX = ref(0)
-const dragStartY = ref(0)
-const modalX = ref(0)
-const modalY = ref(0)
+const emit = defineEmits<{
+  'article-opened': [title: string, content: BlogCollectionItem]
+  'article-closed': []
+}>()
 
 const { data: posts, pending, error } = await useAsyncData('blog-posts', () => {
   return queryCollection('blog').all()
@@ -143,54 +86,13 @@ const sortedPosts = computed(() => {
   return [...posts.value].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 })
 
-const modalStyle = computed(() => {
-  if (modalX.value === 0 && modalY.value === 0) {
-    return {
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '100%',
-      maxWidth: '56rem',
-      padding: '1rem',
-    }
-  }
-  return {
-    left: `${modalX.value}px`,
-    top: `${modalY.value}px`,
-    width: '100%',
-    maxWidth: '56rem',
-    padding: '1rem',
-  }
-})
-
 const openPost = async (path: string) => {
-  selectedPostPath.value = path
-  selectedPost.value = await queryCollection('blog').path(path).first()
-  modalX.value = 0
-  modalY.value = 0
-}
+  const post = await queryCollection('blog').path(path).first()
 
-const startDrag = (e: MouseEvent) => {
-  isDragging.value = true
-  if (modalX.value === 0 && modalY.value === 0) {
-    const rect = modalRef.value?.getBoundingClientRect()
-    if (rect) {
-      modalX.value = rect.left
-      modalY.value = rect.top
-    }
+  // Emit to parent to open in separate window
+  if (post) {
+    emit('article-opened', post.title, post)
   }
-  dragStartX.value = e.clientX - modalX.value
-  dragStartY.value = e.clientY - modalY.value
-}
-
-const onDrag = (e: MouseEvent) => {
-  if (!isDragging.value) return
-  modalX.value = e.clientX - dragStartX.value
-  modalY.value = e.clientY - dragStartY.value
-}
-
-const stopDrag = () => {
-  isDragging.value = false
 }
 
 const formatDate = (dateString: string) => {
@@ -198,15 +100,6 @@ const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
-
-onMounted(() => {
-  document.addEventListener('mousemove', onDrag)
-  document.addEventListener('mouseup', stopDrag)
-})
-onUnmounted(() => {
-  document.removeEventListener('mousemove', onDrag)
-  document.removeEventListener('mouseup', stopDrag)
-})
 </script>
 
 <style scoped>

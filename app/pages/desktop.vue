@@ -172,7 +172,27 @@
       @activate="activeWindow = 'blog'"
       @minimize="minimizeWindow('blog')"
     >
-      <Blog />
+      <Blog
+        @article-opened="handleArticleOpened"
+        @article-closed="handleArticleClosed"
+      />
+    </Window>
+
+    <!-- Article Window -->
+    <Window
+      v-if="windows.article"
+      :title="openArticleTitle || 'Blog Article'"
+      :initial-x="400"
+      :initial-y="120"
+      :width="900"
+      :height="600"
+      :is-active="activeWindow === 'article'"
+      :is-minimized="minimizedWindows.article"
+      @close="closeWindow('article'); handleArticleClosed()"
+      @activate="activeWindow = 'article'"
+      @minimize="minimizeWindow('article')"
+    >
+      <BlogArticle :article="openArticleContent" />
     </Window>
 
     <!-- Start Menu -->
@@ -303,6 +323,13 @@
           :isActive="activeWindow === 'blog' && !minimizedWindows.blog"
           @click="toggleMinimize('blog')"
         />
+        <TaskbarButton
+          :icon="FileText"
+          :label="openArticleTitle || 'Article'"
+          :isOpen="windows.article"
+          :isActive="activeWindow === 'article' && !minimizedWindows.article"
+          @click="toggleMinimize('article')"
+        />
       </div>
 
       <div class="time px-1 md:px-2 border-2 border-[#808080] border-t-white border-l-white text-xs md:text-sm">
@@ -323,7 +350,9 @@ import Projects from '~/components/Projects.vue'
 import Experience from '~/components/Experience.vue'
 import Contact from '~/components/Contact.vue'
 import Blog from '~/components/Blog.vue'
+import BlogArticle from '~/components/BlogArticle.vue'
 import AboutShrimpOS from '~/components/AboutShrimpOS.vue'
+import type { BlogCollectionItem } from '@nuxt/content'
 
 const windows = reactive({
   about: false,
@@ -331,6 +360,7 @@ const windows = reactive({
   experience: false,
   contact: false,
   blog: false,
+  article: false,
 })
 
 const minimizedWindows = reactive({
@@ -339,10 +369,13 @@ const minimizedWindows = reactive({
   experience: false,
   contact: false,
   blog: false,
+  article: false,
 })
 
 const activeWindow = ref<string | null>(null)
 const selectedIcon = ref<string | null>(null)
+const openArticleTitle = ref<string | null>(null)
+const openArticleContent = ref<any>(null)
 const isLoading = ref(false)
 const currentTime = ref('')
 const isDesktopLoading = ref(true)
@@ -422,6 +455,23 @@ const toggleMinimize = (windowName: keyof typeof windows) => {
   } else {
     // Just activate if it's not active
     activeWindow.value = windowName
+  }
+}
+
+const handleArticleOpened = (title: string, content: BlogCollectionItem) => {
+  openArticleTitle.value = title
+  openArticleContent.value = content
+  windows.article = true
+  activeWindow.value = 'article'
+}
+
+const handleArticleClosed = () => {
+  openArticleTitle.value = null
+  openArticleContent.value = null
+  windows.article = false
+  minimizedWindows.article = false
+  if (activeWindow.value === 'article') {
+    activeWindow.value = null
   }
 }
 
