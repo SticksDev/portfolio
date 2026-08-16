@@ -1,8 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default defineNuxtConfig({
-    compatibilityDate: '2026-08-16',
+export default defineNuxtConfig({,
     devtools: { enabled: true },
 
     modules: [
@@ -13,10 +12,6 @@ export default defineNuxtConfig({
         '@nuxt/image',
         '@tresjs/nuxt',
     ],
-
-    nitro: {
-        preset: 'cloudflare_pages',
-    },
 
     content: {
         build: {
