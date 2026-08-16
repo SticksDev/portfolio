@@ -23,7 +23,10 @@ export function loadMermaid(): Promise<MermaidModule> {
         // htmlLabels: false renders labels as real SVG text, which mermaid
         // measures via getBBox on the element it actually draws — unlike
         // foreignObject HTML labels, which are measured in a detached
-        // context and hard-clipped when the estimate is short
+        // context and hard-clipped when the estimate is short. Mermaid 11
+        // reads the top-level key; flowchart.htmlLabels is deprecated but
+        // still consulted, so set both.
+        htmlLabels: false,
         flowchart: { useMaxWidth: false, htmlLabels: false },
         sequence: { useMaxWidth: false },
         gantt: {

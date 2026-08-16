@@ -125,6 +125,15 @@ onUnmounted(() => {
   display: block;
 }
 
+/* foreignObject (mermaid's HTML-label wrapper) clips its content by
+   default, and fractional-width rounding at non-100% display scaling
+   can shave the last character. Let labels paint past the measured
+   box instead of truncating. */
+.mermaid-chart svg foreignObject,
+.mermaid-chart-full svg foreignObject {
+  overflow: visible;
+}
+
 /* Force the exact font mermaid measured with (MERMAID_FONT in
    composables/mermaid.ts) so the page theme (Courier body font,
    window-content line-height) can't widen labels past their boxes */

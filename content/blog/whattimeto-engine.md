@@ -105,19 +105,19 @@ A thing you learn to hate. DST is a nightmare for scheduling. If you store your 
 
 That matches how humans think about their own schedules. Nobody wakes up an hour early in March because their availability was stored in UTC.
 
-Here's the same 10:00 to 18:00 rule on three different days. The wall-clock labels are identical, but look at the real durations of the bars:
+Since the clocks change at 02:00, a rule that starts at 02:30 on the spring-forward day is a problem. That local time simply doesn't exist, so the engine shifts it forward to the nearest valid instant (03:30). Conversely, a rule that starts at 01:30 on the fall-back day happens twice, and the engine resolves that to the earlier offset (the first 01:30, not the second).
 
 ```mermaid
 gantt
     title Daylight saving time and wall-clock anchoring
     dateFormat HH:mm
     axisFormat %H:%M
-    section Normal day
-    10.00-18.00 (8 real hours) :active, 10:00, 8h
+    section Normal night
+    22.00-06.00 (8 real hours) :active, 22:00, 8h
     section Spring forward
-    10.00-18.00 (7 real hours, an hour vanished) :crit, 10:00, 7h
+    22.00-06.00 (7 real hours, 02.00-03.00 never happened) :crit, 22:00, 7h
     section Fall back
-    10.00-18.00 (9 real hours, an hour repeated) :done, 10:00, 9h
+    22.00-06.00 (9 real hours, 01.00-02.00 happened twice) :done, 22:00, 9h
 ```
 
 There are two nasty edge cases hiding inside that choice, and I lean on Luxon's well-defined semantics for both. When clocks spring forward, some local times simply don't exist (there is no 02:30 on the gap day), so those get shifted forward to the nearest valid instant. When clocks fall back, some local times happen twice, and those resolve to the earlier offset.
