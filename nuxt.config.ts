@@ -18,7 +18,34 @@ export default defineNuxtConfig({
         preset: 'cloudflare_pages',
     },
 
-    css: ['./app/assets/css/main.css', './app/assets/css/blog-prose.css'],
+    content: {
+        build: {
+            markdown: {
+                highlight: {
+                    // default langs plus mermaid so Shiki doesn't warn on ```mermaid blocks
+                    langs: [
+                        'js',
+                        'jsx',
+                        'json',
+                        'ts',
+                        'tsx',
+                        'vue',
+                        'css',
+                        'html',
+                        'vue-html',
+                        'bash',
+                        'shell',
+                        'mdc',
+                        'md',
+                        'yaml',
+                        'mermaid',
+                    ],
+                },
+            },
+        },
+    },
+
+    css: ['~/assets/css/main.css', '~/assets/css/blog-prose.css'],
     vite: {
         plugins: [tailwindcss()],
     },

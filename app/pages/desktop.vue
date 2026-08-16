@@ -192,7 +192,7 @@
       @activate="activeWindow = 'article'"
       @minimize="minimizeWindow('article')"
     >
-      <BlogArticle :article="openArticleContent" />
+      <BlogArticle :path="openArticlePath" />
     </Window>
 
     <!-- Start Menu -->
@@ -352,15 +352,23 @@ import Contact from '~/components/Contact.vue'
 import Blog from '~/components/Blog.vue'
 import BlogArticle from '~/components/BlogArticle.vue'
 import AboutShrimpOS from '~/components/AboutShrimpOS.vue'
-import type { BlogCollectionItem } from '@nuxt/content'
+
+// Direct link support: /desktop?article=<slug> skips the desktop loading
+// animation and opens the blog + article windows immediately
+const route = useRoute()
+const router = useRouter()
+const deepLinkSlug =
+  typeof route.query.article === 'string' && route.query.article !== ''
+    ? route.query.article
+    : null
 
 const windows = reactive({
   about: false,
   projects: false,
   experience: false,
   contact: false,
-  blog: false,
-  article: false,
+  blog: !!deepLinkSlug,
+  article: !!deepLinkSlug,
 })
 
 const minimizedWindows = reactive({
@@ -372,16 +380,38 @@ const minimizedWindows = reactive({
   article: false,
 })
 
-const activeWindow = ref<string | null>(null)
+// For deep links, fetch the article during SSR so crawlers (Discord,
+// Twitter, etc.) get article-specific OG tags in the served HTML
+const { data: deepLinkPost } = deepLinkSlug
+  ? await useAsyncData(`deep-link-${deepLinkSlug}`, () =>
+      queryCollection('blog').path(`/blog/${deepLinkSlug}`).first(),
+    )
+  : { data: ref(null) }
+
+if (deepLinkPost.value) {
+  const post = deepLinkPost.value
+  useSeoMeta({
+    title: post.title,
+    description: post.description,
+    ogTitle: post.title,
+    ogDescription: post.description,
+    ogType: 'article',
+    ogUrl: `https://sticksdev.tech/blog/${deepLinkSlug}`,
+    twitterTitle: post.title,
+    twitterDescription: post.description,
+  })
+}
+
+const activeWindow = ref<string | null>(deepLinkSlug ? 'article' : null)
 const selectedIcon = ref<string | null>(null)
-const openArticleTitle = ref<string | null>(null)
-const openArticleContent = ref<any>(null)
+const openArticleTitle = ref<string | null>(deepLinkPost.value?.title ?? null)
+const openArticlePath = ref<string | null>(deepLinkSlug ? `/blog/${deepLinkSlug}` : null)
 const isLoading = ref(false)
 const currentTime = ref('')
-const isDesktopLoading = ref(true)
-const loadingProgress = ref(0)
+const isDesktopLoading = ref(!deepLinkSlug)
+const loadingProgress = ref(deepLinkSlug ? 100 : 0)
 const loadingMessage = ref('Loading Desktop...')
-const visibleIcons = ref(0)
+const visibleIcons = ref(deepLinkSlug ? 5 : 0)
 const showStartMenu = ref(false)
 const showAbout = ref(false)
 const isShuttingDown = ref(false)
@@ -458,16 +488,19 @@ const toggleMinimize = (windowName: keyof typeof windows) => {
   }
 }
 
-const handleArticleOpened = (title: string, content: BlogCollectionItem) => {
+const handleArticleOpened = (title: string, path: string) => {
   openArticleTitle.value = title
-  openArticleContent.value = content
+  openArticlePath.value = path
   windows.article = true
   activeWindow.value = 'article'
+  // Keep the address bar copyable as a direct link to this article
+  router.replace({ query: { ...route.query, article: path.replace(/^\/blog\//, '') } })
 }
 
 const handleArticleClosed = () => {
   openArticleTitle.value = null
-  openArticleContent.value = null
+  openArticlePath.value = null
+  router.replace({ query: { ...route.query, article: undefined } })
   windows.article = false
   minimizedWindows.article = false
   if (activeWindow.value === 'article') {
@@ -551,7 +584,11 @@ const startDesktopLoading = async () => {
 onMounted(() => {
   updateTime()
   timeInterval = setInterval(updateTime, 1000)
-  startDesktopLoading()
+
+  // Deep links skip the loading animation and welcome sound entirely
+  if (!deepLinkSlug) {
+    startDesktopLoading()
+  }
 
   // Close start menu when clicking outside
   document.addEventListener('click', (e) => {

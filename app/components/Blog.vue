@@ -70,10 +70,9 @@
 
 <script setup lang="ts">
 import { Calendar, Tag, ArrowRight, FileText, Loader2, AlertCircle, Inbox } from 'lucide-vue-next'
-import type { BlogCollectionItem } from '@nuxt/content'
 
 const emit = defineEmits<{
-  'article-opened': [title: string, content: BlogCollectionItem]
+  'article-opened': [title: string, path: string]
   'article-closed': []
 }>()
 
@@ -86,13 +85,11 @@ const sortedPosts = computed(() => {
   return [...posts.value].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 })
 
-const openPost = async (path: string) => {
-  const post = await queryCollection('blog').path(path).first()
-
-  // Emit to parent to open in separate window
-  if (post) {
-    emit('article-opened', post.title, post)
-  }
+const openPost = (path: string) => {
+  // Emit to parent to open in separate window; the article window
+  // fetches its own content so dev hot reload can refresh it
+  const post = sortedPosts.value.find((p) => p.path === path)
+  emit('article-opened', post?.title ?? 'Blog Article', path)
 }
 
 const formatDate = (dateString: string) => {

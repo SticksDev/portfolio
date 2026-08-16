@@ -16,24 +16,34 @@
       class="title-bar flex items-center justify-between px-1 py-1 select-none"
       :class="[
         isActive ? 'bg-[#000080]' : 'bg-[#808080]',
-        isMobile ? '' : 'cursor-move'
+        isMobile || isMaximized ? '' : 'cursor-move'
       ]"
       @mousedown="startDrag"
       @touchstart="startDrag"
+      @dblclick="toggleMaximize"
     >
       <span class="text-white font-bold text-sm px-2">{{ title }}</span>
-      <div class="flex gap-0.5">
+      <div class="flex gap-0.5" @dblclick.stop>
         <button
           class="title-btn w-5 h-5 bg-[#c0c0c0] border border-white border-b-[#808080] border-r-[#808080] flex items-center justify-center text-xs font-bold hover:bg-[#dfdfdf]"
-          @click.stop="$emit('minimize')"
           title="Minimize"
+          @click.stop="$emit('minimize')"
         >
           <Minus :size="16" />
         </button>
         <button
+          v-if="!isMobile"
           class="title-btn w-5 h-5 bg-[#c0c0c0] border border-white border-b-[#808080] border-r-[#808080] flex items-center justify-center text-xs font-bold hover:bg-[#dfdfdf]"
-          @click.stop="$emit('close')"
+          :title="isMaximized ? 'Restore' : 'Maximize'"
+          @click.stop="toggleMaximize"
+        >
+          <Copy v-if="isMaximized" :size="12" />
+          <Square v-else :size="12" />
+        </button>
+        <button
+          class="title-btn w-5 h-5 bg-[#c0c0c0] border border-white border-b-[#808080] border-r-[#808080] flex items-center justify-center text-xs font-bold hover:bg-[#dfdfdf]"
           title="Close"
+          @click.stop="$emit('close')"
         >
           <X :size="16" />
         </button>
@@ -44,11 +54,19 @@
     <div class="window-content bg-white border-2 border-[#808080] border-t-white border-l-white p-6 overflow-auto text-black" :style="contentStyle">
       <slot />
     </div>
+
+    <!-- Resize Grip -->
+    <div
+      v-if="!isMobile && !isMaximized"
+      class="resize-grip absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
+      @mousedown.stop="startResize"
+      @touchstart.stop="startResize"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { X, Minus } from 'lucide-vue-next';
+import { X, Minus, Square, Copy } from 'lucide-vue-next';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps<{
@@ -70,9 +88,22 @@ const emit = defineEmits<{
 const windowRef = ref<HTMLElement | null>(null)
 const x = ref(props.initialX ?? 100)
 const y = ref(props.initialY ?? 100)
+const w = ref(props.width ?? 600)
+const h = ref(props.height ?? 400)
+const isMaximized = ref(false)
 const isDragging = ref(false)
+const isResizing = ref(false)
 const dragStartX = ref(0)
 const dragStartY = ref(0)
+const resizeStartX = ref(0)
+const resizeStartY = ref(0)
+const resizeStartW = ref(0)
+const resizeStartH = ref(0)
+
+const MIN_WIDTH = 320
+const MIN_HEIGHT = 200
+const TASKBAR_HEIGHT = 40
+const TITLE_BAR_HEIGHT = 32
 const isMobile = ref(false)
 const wasMinimized = ref(false)
 const shouldAnimate = ref(false)
@@ -97,28 +128,40 @@ const windowStyle = computed(() => {
     }
   }
 
-  return {
-    left: `${x.value}px`,
-    top: `${y.value}px`,
-    width: props.width ? `${props.width}px` : '600px',
-  }
-})
-
-const contentStyle = computed(() => {
-  if (isMobile.value) {
+  if (isMaximized.value) {
     return {
-      height: 'calc(100% - 32px)', // Subtract title bar height
+      left: '0px',
+      top: '0px',
+      width: '100vw',
+      height: `calc(100vh - ${TASKBAR_HEIGHT}px)`,
     }
   }
 
   return {
-    height: props.height ? `${props.height}px` : '400px',
+    left: `${x.value}px`,
+    top: `${y.value}px`,
+    width: `${w.value}px`,
+  }
+})
+
+const contentStyle = computed(() => {
+  if (isMobile.value || isMaximized.value) {
+    return {
+      height: `calc(100% - ${TITLE_BAR_HEIGHT}px)`, // Subtract title bar height
+    }
+  }
+
+  return {
+    height: `${h.value}px`,
   }
 })
 
 const startDrag = (e: MouseEvent | TouchEvent) => {
-  // Don't allow dragging on mobile
-  if (isMobile.value) return
+  // Don't allow dragging on mobile or while maximized
+  if (isMobile.value || isMaximized.value) {
+    emit('activate')
+    return
+  }
 
   isDragging.value = true
   const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
@@ -129,16 +172,44 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
 }
 
 const onDrag = (e: MouseEvent | TouchEvent) => {
-  if (!isDragging.value || isMobile.value) return
+  if (isMobile.value) return
 
   const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
   const clientY = 'touches' in e ? e.touches[0]!.clientY : e.clientY
+
+  if (isResizing.value) {
+    w.value = Math.max(MIN_WIDTH, resizeStartW.value + (clientX - resizeStartX.value))
+    h.value = Math.max(MIN_HEIGHT, resizeStartH.value + (clientY - resizeStartY.value))
+    return
+  }
+
+  if (!isDragging.value) return
   x.value = clientX - dragStartX.value
   y.value = clientY - dragStartY.value
 }
 
 const stopDrag = () => {
   isDragging.value = false
+  isResizing.value = false
+}
+
+const startResize = (e: MouseEvent | TouchEvent) => {
+  if (isMobile.value || isMaximized.value) return
+
+  isResizing.value = true
+  const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX
+  const clientY = 'touches' in e ? e.touches[0]!.clientY : e.clientY
+  resizeStartX.value = clientX
+  resizeStartY.value = clientY
+  resizeStartW.value = w.value
+  resizeStartH.value = h.value
+  emit('activate')
+}
+
+const toggleMaximize = () => {
+  if (isMobile.value) return
+  isMaximized.value = !isMaximized.value
+  emit('activate')
 }
 
 const bringToFront = () => {
@@ -188,6 +259,16 @@ onUnmounted(() => {
 
 .title-btn:active {
   border-style: inset;
+}
+
+.resize-grip {
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 3px,
+    #808080 3px 4px,
+    #ffffff 4px 5px
+  );
+  touch-action: none;
 }
 
 .minimize-animation {
