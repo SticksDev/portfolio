@@ -15,6 +15,14 @@ tl;dr: **Please, don't be an idiot.**
 
 ::
 
+::blog-alert{type="info" title="AI Usage Disclosure"}
+This article was written with the assistance of AI tools to help with writing and editing, I absolutely suck at writing, so AI helped me make it somewhat readable. I apologize if the style feels a bit off in places, but all technical content and analysis were verified by me.
+
+Additionally, AI also assisted with the research process, helping to find files, point out patterns, and also suggest potential areas of interest for deeper analysis. All findings and conclusions were independently verified by me to ensure accuracy and correctness. I did not rely solely on AI for my research or analysis, using it only as a supplementary tool to aid my own investigation.
+
+Please don't mace me for using AI in this article.. I promise I didn't let it do the heavy lifting on the technical parts.
+::
+
 This article was inspired by [Vio's research](https://vio.gay/posts/prisoner-commercialization.html), which covers some pretty.. well.. concerning practices in prison software. I **highly recommend** reading it first for context. My goal here was to go deeper into Lockdown itself and get a local copy running.
 
 **This will not be a comprehensive report or a guide on how to use the software!!** JailATM (Lockdown) is a large program containing many features and components, and to cover them all would be beyond the scope of this article. Instead, the focus will be on specific security aspects and vulnerabilities discovered during the analysis.
